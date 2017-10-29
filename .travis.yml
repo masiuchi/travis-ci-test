@@ -3,6 +3,16 @@ sudo: required
 services:
   - docker
 
+cache:
+  directories:
+    - $HOME/docker
+
+before_script:
+  - if [ -e $HOME/docker/image.tar.gz ]; then gunzip $HOME/docker/image.tar.gz && docker load -i $HOME/docker/image.tar; fi
+
 script:
   - docker build -t travis-ci-test .
+
+before_cache:
+  - mkdir -p $HOME/docker; docker save travis-ci-test > $HOME/docker/image.tar && gzip $HOME/docker/image.tar
 
